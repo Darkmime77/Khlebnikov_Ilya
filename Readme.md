@@ -23,20 +23,17 @@
 ```
 pip install -r requirements.txt
 ```
-<ul>
-<li>Запустить файл <b>main.py</b>.</li>
-</ul>
+Для запуска FastApi ввести команду:
+
+```
+uvicorn main:app --reload       
+```
 После его запуска на сервере должны появиться 3 следующих таблицы
 <ul>
 <li>Rent;</li>
 <li>Transport;</li>
 <li>Users.</li>
 </ul>
-Для запуска FastApi ввести команду:
-
-```
-uvicorn main:app --reload       
-```
 Перейти по сгенерированному адресу http://127.0.0.1:8000/docs.
 
 Первая авторизация
