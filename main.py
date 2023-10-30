@@ -351,7 +351,7 @@ async def end_rent(
         }
     )
     db.commit()
-    return "Аренда закончена"
+    return f"Аренда закончена - итоговая сумма: {round(price * rent_db.priceOfUnit,2)+rent_db.priceOfUnit}"
 
 
 # PaymentController
