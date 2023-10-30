@@ -109,8 +109,7 @@ class adminRent(Rent):
 
 class adminEditRent(adminRent):
     timeStart: str = Field(example='gggg-mm-dd h:m:s')
-    timeEnd : str = Field(example='gggg-mm-dd h:m:s')
+    timeEnd : str = Field(example='')
     priceOfUnit: int
-    priceTupe: str
     finalPrice: int
     rentId: int

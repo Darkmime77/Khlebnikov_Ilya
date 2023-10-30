@@ -330,7 +330,7 @@ async def end_rent(
     if user_db.is_auth == False:
         raise HTTPException(400, "Not authenticated")
     rent_db = db.get(models.Rent, rent_input.rentId)
-    if rent_db.userId == user_db.userId:
+    if rent_db.userId != user_db.userId:
         raise HTTPException(400,"Вы не арендуете данный транспорт!")
     data = datetime.datetime.now() - rent_db.timeStart
     if rent_db.priceType == "minutes":
@@ -339,7 +339,7 @@ async def end_rent(
         price = data.days
 
     db.query(models.Rent).filter(models.Rent.rentId == rent_input.rentId).update(
-        {"timeEnd": datetime.datetime.now(), "finalPrice": round(price * rent_db.priceOfUnit,2)}
+        {"timeEnd": datetime.datetime.now(), "finalPrice": round(price * rent_db.priceOfUnit,2)+rent_db.priceOfUnit}
     )
     db.query(models.Transport).filter(
         models.Transport.transportId == rent_db.transportId
@@ -347,6 +347,7 @@ async def end_rent(
         {
             "latitube": rent_input.lat,
             "longitube": rent_input.long,
+            "canBeRanted": True
         }
     )
     db.commit()
@@ -704,18 +705,19 @@ async def admin_new_rent(
     if user_db.is_auth == False:
         raise HTTPException(400, "Not authenticated")
     transport_db = db.get(models.Transport, rent_input.trasportId)
+    user_db_test = db.get(models.Users,rent_input.userId)
+    if not user_db_test:
+        raise HTTPException(400,"Не верный идентификатор пользователя!")
     if transport_db.canBeRanted == False:
-        raise "Транспорт не доступен для аренды!"
-    if transport_db.userId == user_db.userId:
-        raise "Нельзя арендовывать свой собственный автомобиль!"
+        raise HTTPException(400,"Транспорт не доступен для аренды!")
     isadmin = db.get(models.Users, userId)
     if isadmin.isAdmin == True:
         if rent_input.rentType == "minutes":
-            rentUnit = db.get(models.Transport.minutePrice, rent_input.trasportId)
+            rentUnit = transport_db.minutePrice
         elif rent_input.rentType == "day":
-            rentUnit = db.get(models.Transport.dayPrice, rent_input.trasportId)
+            rentUnit = transport_db.dayPrice
         else:
-            raise "Не верно выбран тип аренды, впишите 1 из следующих вариантов minutes | day"
+            raise HTTPException(400,"Не верно выбран тип аренды, впишите 1 из следующих вариантов minutes | day")
         car_db = models.Rent(
             userId=rent_input.userId,
             timeStart=datetime.datetime.now(),
@@ -753,16 +755,14 @@ async def admin_rent_edit(rent_input: schemas.adminEditRent,
         User_db = db.query(models.Users).get(rent_input.userId)
         if not User_db:
             raise HTTPException(404, "Не верный идентификатор пользователя")
-        db.query(models.Transport).filter(
-            models.Rent.rentId == rent_input.rentId
-        ).update(
+        db.query(models.Transport).filter(models.Rent.rentId == rent_input.rentId).update(
             {
                 "transportId": rent_input.trasportId,
                 "userId": rent_input.userId,
                 "timeStart": rent_input.timeStart,
                 "timeEnd": rent_input.timeEnd,
                 "priceOfUnit": rent_input.priceOfUnit,
-                "priceType": rent_input.priceTupe,
+                "priceType": rent_input.rentType,
                 "finalPrice": rent_input.finalPrice
             }
         )
