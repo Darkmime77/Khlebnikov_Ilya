@@ -93,7 +93,7 @@ async def black_list_JWT(
 
 
 @app.put("/api/Account/Update")
-async def User_Edit(
+async def user_edit(
     user_input: schemas.UserEdit,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -356,7 +356,7 @@ async def end_rent(
 
 # PaymentController
 @app.post("/api/Payment/Hesoyam/{accountId}")
-async def Payment_Controller(
+async def payment_controller(
     Payment_input: schemas.PaymentController,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -387,7 +387,7 @@ async def Payment_Controller(
 
 # AdminAccountController
 @app.get("/api/Admin/Account")
-def admin_get_Users(
+def admin_get_users(
     userId=Depends(auth_handler.auth_wrapper), db: Session = Depends(get_db)
 ):
     user_db = db.query(models.Users).filter(models.Users.userId == userId).first()
@@ -450,7 +450,7 @@ def adm_register_user(
 
 
 @app.put("/api/Admin/Account/{id}")
-async def Admin_User_Edit(
+async def admin_user_edit(
     user_input: schemas.AdminUserEdit,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -485,7 +485,7 @@ async def Admin_User_Edit(
 
 
 @app.delete("/api/Admin/Account/{id}")
-async def Admin_User_delete(
+async def admin_user_delete(
     User_input: schemas.DeleteUser,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -511,7 +511,7 @@ async def Admin_User_delete(
 
 # AdminTranstorController
 @app.get("/api/Admin/Transport")
-async def Admin_get_Cars(
+async def admin_get_cars(
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
 ):
@@ -527,7 +527,7 @@ async def Admin_get_Cars(
 
 
 @app.get("/api/Admin/Transport/{id}")
-async def Admin_get_Car(
+async def admin_get_car(
     transportId: int,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -544,7 +544,7 @@ async def Admin_get_Car(
 
 
 @app.post("/api/Admin/Transport")
-async def Admin_Creat_Transport(
+async def admin_creat_transport(
     car_input: schemas.AdminTransport,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -578,7 +578,7 @@ async def Admin_Creat_Transport(
 
 
 @app.put("/api/Admin/Transport/{id}")
-async def Admin_Transport_Edit(
+async def admin_transport_edit(
     car_input: schemas.EditAdminTransport,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
@@ -621,7 +621,7 @@ async def Admin_Transport_Edit(
 
 
 @app.delete("/api/Admin/Transport/{id}")
-async def Admin_Transport_delete(
+async def admin_transport_delete(
     Transport_input: schemas.DeleteTransport,
     userId=Depends(auth_handler.auth_wrapper),
     db: Session = Depends(get_db),
