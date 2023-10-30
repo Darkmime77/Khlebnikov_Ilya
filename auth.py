@@ -21,12 +21,11 @@ class AuthHandler:
         return self.pwd_context.verify(input_pass, hash_pass)
 
     # создание JWT токена, с временем жизни 30 минут
-    def encode_token(self, username, userId):
+    def encode_token(self, userId):
         payload = {
             "exp": datetime.utcnow() + timedelta(minutes=30),
             "iat": datetime.utcnow(),
-            "sub": username,
-            "id": userId
+            "sub": userId,
         }
         return jwt.encode(payload, self.secret, algorithm="HS256")
 

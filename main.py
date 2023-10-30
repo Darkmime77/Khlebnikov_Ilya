@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-import models, schemas, datetime
+import models, schemas, datetime, math
 from database import get_db, engine
 from fastapi import Depends, FastAPI, HTTPException
 from auth import AuthHandler
@@ -219,19 +219,12 @@ async def get_rent_all(
     type: str,
     db: Session = Depends(get_db),
 ):
-    Rent_db = (
-        db.query(models.Transport)
-        .filter(
-            (models.Transport.latitube - lat**2)
-            + (models.Transport.latitube - long**2)
-            <= radius,
-            models.Transport.canBeRanted == True,
-            models.Transport.transportType == type,
-        )
-        .all()
-    )
-    return Rent_db
-
+    Rent_db = db.query(models.Transport).all()
+    list_car = []
+    for i in Rent_db:
+        if math.sqrt((i.latitube - lat)**2 + (i.longitube - long)**2) <= radius and i.canBeRanted == True and i.transportType == type:
+            list_car.append(i)
+    return list_car
 
 @app.get("/api/Rent/{rentId}")
 async def get_rent(rentId: int,
